@@ -13,6 +13,7 @@ from machine_learning_engineering.sub_agents.ensemble import agent as ensemble_a
 from machine_learning_engineering.sub_agents.submission import agent as submission_agent_module
 
 from machine_learning_engineering import prompt
+from machine_learning_engineering.shared_libraries.agent_factory import get_agent_factory
 
 
 def save_state(
@@ -27,7 +28,9 @@ def save_state(
     return None
 
 
-mle_pipeline_agent = agents.SequentialAgent(
+# Create the MLE pipeline using the agent factory
+factory = get_agent_factory()
+mle_pipeline_agent = factory.create_sequential_agent(
     name="mle_pipeline_agent",
     sub_agents=[
         initialization_agent_module.initialization_agent,
@@ -40,11 +43,13 @@ mle_pipeline_agent = agents.SequentialAgent(
 )
 
 # For ADK tools compatibility, the root agent must be named `root_agent`
-root_agent = agents.Agent(
-    model=os.getenv("ROOT_AGENT_MODEL"),
+# Create root agent using the multi-provider factory
+root_agent = factory.create_agent(
     name="mle_frontdoor_agent",
     instruction=prompt.FRONTDOOR_INSTRUCTION,
     global_instruction=prompt.SYSTEM_INSTRUCTION,
     sub_agents=[mle_pipeline_agent],
-    generate_content_config=types.GenerateContentConfig(temperature=0.01),
+    description="Main frontdoor agent for MLE-STAR system",
+    temperature=0.01,
+    task_type="reasoning",  # Root agent handles high-level reasoning
 )

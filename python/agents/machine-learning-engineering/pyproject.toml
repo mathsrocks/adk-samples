@@ -23,6 +23,187 @@ scikit-learn = "^1.7.1"
 # want to use PyTorch on a different hardware architecture or CPU.
 # (https://download.pytorch.org/whl)
 torch = {version = "^2.7.1", source = "pytorch_cpu"}
+# HTTP requests for provider implementations
+requests = "^2.31.0"
+
+# =============================================================================
+# Optional LLM Provider Dependencies
+# =============================================================================
+
+# Primary LLM Providers
+openai = {version = "^1.50.0", optional = true}                    # OpenAI GPT-4, GPT-4o
+anthropic = {version = "^0.40.0", optional = true}                 # Claude 3.5 Sonnet, Claude 3 Opus
+# Note: DeepSeek uses OpenAI-compatible API, so no separate package needed
+
+# Open Source & Alternative Providers  
+groq = {version = "^0.13.0", optional = true}                      # Fast inference with Llama, Mixtral
+cohere = {version = "^5.18.0", optional = true}                    # Cohere Command models
+mistralai = {version = "^1.2.0", optional = true}                  # Mistral Large, Mixtral
+together = {version = "^1.3.1", optional = true}                   # Together AI - open source models
+fireworks-ai = {version = "^0.15.2", optional = true}              # Fireworks AI - fast inference
+perplexity-ai = {version = "^0.2.9", optional = true}              # Perplexity with web search
+
+# Open Source Model Platforms
+huggingface-hub = {version = "^0.27.0", optional = true}           # Hugging Face transformers
+replicate = {version = "^1.0.4", optional = true}                  # Replicate model hosting
+transformers = {version = "^4.47.1", optional = true}              # Local transformers
+torch = {version = "^2.7.1", optional = true}                     # For local model inference
+
+# Enterprise & Cloud Providers  
+boto3 = {version = "^1.35.0", optional = true}                     # AWS Bedrock
+azure-identity = {version = "^1.19.0", optional = true}            # Azure OpenAI authentication
+azure-cognitiveservices-language = {version = "^1.0.0b1", optional = true} # Azure AI services
+google-cloud-aiplatform = {version = "^1.93", optional = true}     # Additional Google AI features
+
+# Local Inference & Self-Hosted
+ollama = {version = "^0.4.4", optional = true}                     # Ollama Python client
+litellm = {version = "^1.55.11", optional = true}                  # Universal LLM proxy
+langchain = {version = "^0.3.12", optional = true}                 # LangChain integration
+langchain-community = {version = "^0.3.12", optional = true}       # Community providers
+
+# Model Optimization & Quantization
+optimum = {version = "^1.25.0", optional = true}                   # Model optimization
+bitsandbytes = {version = "^0.45.0", optional = true}              # Quantization
+accelerate = {version = "^1.3.0", optional = true}                 # Model acceleration
+
+[tool.poetry.extras]
+# =============================================================================
+# Individual Provider Extras
+# =============================================================================
+
+# Primary Commercial Providers
+openai = ["openai"]                                                 # OpenAI GPT-4, GPT-4o, o1
+anthropic = ["anthropic"]                                           # Claude 3.5 Sonnet, Claude 3 Opus  
+deepseek = ["openai"]                                               # DeepSeek (uses OpenAI-compatible API)
+
+# Alternative & Specialized Providers
+groq = ["groq"]                                                     # Groq fast inference
+cohere = ["cohere"]                                                 # Cohere Command models
+mistral = ["mistralai"]                                             # Mistral Large, Mixtral
+together = ["together"]                                             # Together AI open source models
+fireworks = ["fireworks-ai"]                                        # Fireworks AI fast inference  
+perplexity = ["perplexity-ai"]                                      # Perplexity with web search
+
+# Open Source Platforms
+huggingface = ["huggingface-hub", "transformers", "torch"]          # Hugging Face ecosystem
+replicate = ["replicate"]                                           # Replicate model hosting
+local = ["ollama", "transformers", "torch", "accelerate"]           # Local inference setup
+
+# Enterprise & Cloud
+aws = ["boto3"]                                                     # AWS Bedrock
+azure = ["azure-identity", "azure-cognitiveservices-language", "openai"] # Azure OpenAI + services
+google-extended = ["google-cloud-aiplatform"]                      # Extended Google AI features
+
+# Advanced Features
+optimization = ["optimum", "bitsandbytes", "accelerate"]            # Model optimization & quantization
+proxy = ["litellm"]                                                 # Universal LLM proxy
+langchain = ["langchain", "langchain-community"]                    # LangChain integration
+
+# =============================================================================
+# Provider Group Extras (Use Case Based)
+# =============================================================================
+
+# By Business Model
+commercial = ["openai", "anthropic", "cohere", "mistralai"]         # Paid commercial APIs
+open-source = ["huggingface-hub", "transformers", "ollama", "together", "replicate"] # Open source models
+freemium = ["groq", "huggingface-hub", "perplexity-ai"]            # Free tier available
+
+# By Performance Characteristics  
+fast-inference = ["groq", "fireworks-ai", "together", "openai"]     # Optimized for speed
+cost-effective = ["openai", "groq", "together"]                     # DeepSeek uses openai, cost-optimized
+high-quality = ["anthropic", "openai"]                             # Premium quality models
+long-context = ["anthropic", "openai", "google-cloud-aiplatform"]  # Large context windows
+
+# By Deployment Type
+cloud-hosted = ["openai", "anthropic", "groq", "cohere", "mistralai", "together", "fireworks-ai", "perplexity-ai"]
+self-hosted = ["ollama", "huggingface-hub", "transformers", "torch", "accelerate", "optimum"]
+enterprise = ["boto3", "azure-identity", "azure-cognitiveservices-language", "google-cloud-aiplatform"]
+
+# By Task Specialization
+coding = ["anthropic", "openai"]                                    # Best for code generation
+reasoning = ["openai", "anthropic"]                                # Best for complex reasoning  
+creative = ["anthropic", "openai", "cohere"]                       # Best for creative tasks
+research = ["perplexity-ai", "openai", "anthropic"]               # With web search capabilities
+
+# =============================================================================
+# Comprehensive Installation Bundles
+# =============================================================================
+
+# Essential Bundle - Most commonly used providers
+essential = [
+    "openai",           # OpenAI GPT-4
+    "anthropic",        # Claude
+    "groq"              # Fast inference (DeepSeek compatible via openai)
+]
+
+# Professional Bundle - Production-ready setup
+professional = [
+    "openai",           # OpenAI GPT-4
+    "anthropic",        # Claude  
+    "groq",             # Groq fast inference
+    "cohere",           # Cohere
+    "mistralai",        # Mistral
+    "boto3",            # AWS Bedrock
+    "azure-identity"    # Azure OpenAI
+]
+
+# Research Bundle - For ML research and experimentation
+research = [
+    "openai",           # OpenAI GPT-4
+    "anthropic",        # Claude
+    "huggingface-hub",  # Hugging Face
+    "transformers",     # Local models
+    "torch",            # PyTorch
+    "perplexity-ai",    # Web search
+    "replicate"         # Model hosting
+]
+
+# Development Bundle - For development and testing
+development = [
+    "openai",           # OpenAI GPT-4
+    "anthropic",        # Claude
+    "groq",             # Fast inference
+    "ollama",           # Local development
+    "litellm"           # Universal proxy
+]
+
+# Local Bundle - For offline and self-hosted setups
+local-full = [
+    "ollama",           # Ollama client
+    "huggingface-hub",  # HF models
+    "transformers",     # Transformers
+    "torch",            # PyTorch
+    "accelerate",       # Acceleration
+    "optimum",          # Optimization
+    "bitsandbytes"      # Quantization
+]
+
+# Enterprise Bundle - For enterprise deployment
+enterprise-full = [
+    "openai",                           # OpenAI
+    "anthropic",                        # Claude
+    "boto3",                            # AWS Bedrock
+    "azure-identity",                   # Azure OpenAI
+    "azure-cognitiveservices-language", # Azure AI
+    "google-cloud-aiplatform",          # Google AI Platform
+    "litellm"                           # Unified proxy
+]
+
+# Complete Bundle - Everything available
+all-providers = [
+    # Primary providers
+    "openai", "anthropic", "groq", "cohere", "mistralai",
+    # Alternative providers  
+    "together", "fireworks-ai", "perplexity-ai",
+    # Open source platforms
+    "huggingface-hub", "replicate", "transformers", "torch",
+    # Enterprise & cloud
+    "boto3", "azure-identity", "azure-cognitiveservices-language", "google-cloud-aiplatform",
+    # Local & self-hosted
+    "ollama", "litellm", "langchain", "langchain-community",
+    # Optimization
+    "optimum", "bitsandbytes", "accelerate"
+]
 [tool.poetry.group.dev]
 optional = true
 

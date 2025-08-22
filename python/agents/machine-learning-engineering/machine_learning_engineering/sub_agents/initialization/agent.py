@@ -18,6 +18,7 @@ from machine_learning_engineering.sub_agents.initialization import prompt
 from machine_learning_engineering.shared_libraries import debug_util
 from machine_learning_engineering.shared_libraries import common_util
 from machine_learning_engineering.shared_libraries import config
+from machine_learning_engineering.shared_libraries.agent_factory import get_agent_factory
 
 
 def get_model_candidates(
@@ -337,21 +338,19 @@ def get_check_data_use_instruction(
     )
 
 
-task_summarization_agent = agents.Agent(
-    model=config.CONFIG.agent_model,
+# Create task summarization agent using the factory
+factory = get_agent_factory()
+task_summarization_agent = factory.create_reasoning_optimized_agent(
     name="task_summarization_agent",
     description="Summarize the task description.",
     instruction=prompt.SUMMARIZATION_AGENT_INSTR,
     after_model_callback=get_task_summary,
-    generate_content_config=types.GenerateContentConfig(
-        temperature=0.0,
-    ),
+    temperature=0.0,
     include_contents="none",
 )
 init_parallel_sub_agents = []
 for k in range(config.CONFIG.num_solutions):
-    model_retriever_agent = agents.Agent(
-        model=config.CONFIG.agent_model,
+    model_retriever_agent = factory.create_reasoning_optimized_agent(
         name=f"model_retriever_agent_{k+1}",
         description="Retrieve effective models for solving a given task.",
         instruction=get_model_retriever_agent_instruction,
