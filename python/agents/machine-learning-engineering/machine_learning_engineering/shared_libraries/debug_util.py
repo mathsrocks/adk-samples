@@ -15,6 +15,7 @@ from machine_learning_engineering.shared_libraries import code_util
 from machine_learning_engineering.shared_libraries import common_util
 from machine_learning_engineering.shared_libraries import check_leakage_util
 from machine_learning_engineering.shared_libraries import config
+from machine_learning_engineering.shared_libraries.agent_factory import get_agent_factory
 
 
 def check_rollback(
@@ -206,8 +207,8 @@ def get_debug_inner_loop_agent(
     suffix: str,
 ) -> agents.LoopAgent:
     """Gets the debug_inner_loop_agent."""
-    bug_summary_agent = agents.Agent(
-        model=config.CONFIG.agent_model,
+    factory = get_agent_factory()
+    bug_summary_agent = factory.create_coding_optimized_agent(
         name=code_util.get_name_with_prefix_and_suffix(
             base_name="bug_summary_agent",
             prefix=prefix,
@@ -228,8 +229,7 @@ def get_debug_inner_loop_agent(
         ),
         include_contents="none",
     )
-    debug_agent = agents.Agent(
-        model=config.CONFIG.agent_model,
+    debug_agent = factory.create_coding_optimized_agent(
         name=code_util.get_name_with_prefix_and_suffix(
             base_name="debug_agent",
             prefix=prefix,
